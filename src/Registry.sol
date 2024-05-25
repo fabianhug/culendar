@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: WTFPL
 pragma solidity ^0.8.20;
 
 import { Ownable } from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
@@ -23,7 +22,7 @@ contract Registry is Ownable {
         bytes indexed filterName,
         bytes name
     );
-    
+
     constructor() Ownable(msg.sender) {}
 
     /**
@@ -41,7 +40,7 @@ contract Registry is Ownable {
 
     /**
      * Looks up a shielded address by a name.
-     * @param _name .bay name
+     * @param _name a user name for the app
      * @return _shieldedAddress Shielded address
      */
     function shieldedAddressOfName(bytes calldata _name)
@@ -110,7 +109,7 @@ contract Registry is Ownable {
             );
             require(
                 _name.length >= 3,
-                "Registry::register: name must be min 7 chars"
+                "Registry::register: name must be min 3 chars"
             );
         }
         bytes memory _lower = _toLower(_name);
@@ -121,6 +120,8 @@ contract Registry is Ownable {
         );
 
         shieldedByNativeAddresses[msg.sender] = _shieldedAddress;
+        names[_shieldedAddress] = _name;
+        shieldedAddressesByNames[_nameKey] = _shieldedAddress;
 
         emit Registered(
             msg.sender,
