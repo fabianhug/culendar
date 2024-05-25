@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@noble/ciphers": "^0.5.3",
+    "@noble/curves": "^1.4.0"
+  }
+}
