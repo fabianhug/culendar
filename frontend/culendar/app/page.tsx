@@ -5,8 +5,18 @@ import { x25519 } from "@noble/curves/ed25519";
 import { xchacha20poly1305 } from "@noble/ciphers/chacha";
 import { randomBytes } from "@noble/ciphers/webcrypto";
 import { utf8ToBytes, bytesToUtf8 } from "@noble/ciphers/utils";
-
 import { Button } from "@/components/ui/button";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import WalletConnectButton from "@/components/ui/walletConnectButton";
+import { useWeb3ModalAccount } from "@web3modal/ethers/react";
 
 export default function Home() {
   const [decryptedEvent, setDecryptedMessage] = useState<{
@@ -14,6 +24,8 @@ export default function Home() {
     Location: string;
     Time: string;
   } | null>(null);
+
+  const { address, chainId, isConnected } = useWeb3ModalAccount();
 
   useEffect(() => {
     const priv =
@@ -49,10 +61,29 @@ export default function Home() {
 
   return (
     <>
+      <Menubar>
+        <MenubarMenu>
+          <MenubarTrigger>Manage Events</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>New Event</MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem>Edit Event</MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem>List Event</MenubarItem>
+          </MenubarContent>
+          <WalletConnectButton />
+        </MenubarMenu>
+      </Menubar>
+
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <div className="flex items-center justify-center min-h-screen">
-        <Button>Click me</Button>
+      <div className="flex items-center justify-center">
+        <p className="text-lg font-semibold">Wallet Address: {address}</p>
+        <p className="text-lg font-semibold">Chain ID: {chainId}</p>
+        <p className="text-lg font-semibold">
+          Connection Status: {isConnected ? "Connected" : "Disconnected"}
+        </p>
       </div>
+
       {decryptedEvent && (
         <div>
           <p>
