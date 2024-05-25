@@ -24,7 +24,7 @@ contract Registry is Ownable {
         bytes name
     );
     
-    constructor() {}
+    constructor() Ownable(msg.sender) {}
 
     /**
      * Looks up a shielded address by a native address.
