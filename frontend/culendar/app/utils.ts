@@ -1,29 +1,30 @@
 import { Contract, ContractEventName } from 'ethers'
 import { xchacha20poly1305 } from "@noble/ciphers/chacha";
+import {culendarAbi} from '../abis/Culendar.abi'
 
 async function querryCreateEvent() {
-    let culandar = new Contract("", "");
+    let culandar = new Contract("", culendarAbi);
     const filter = culandar.filters.CreatedEvent()
     return await queryFilterBatched(0, 0, culandar, filter)
 
 }
 
 async function querryConfirmEvent() {
-    let culandar = new Contract("", "");
+    let culandar = new Contract("", culendarAbi);
     const filter = culandar.filters.Confirmed()
     return await queryFilterBatched(0, 0, culandar, filter)
 
 }
 
 async function querryDeclined() {
-    let culandar = new Contract("", "");
+    let culandar = new Contract("", culendarAbi);
     const filter = culandar.filters.Declined()
     return await queryFilterBatched(0, 0, culandar, filter)
 
 }
 
 async function querryJoinedWaitlist() {
-    let culandar = new Contract("", "");
+    let culandar = new Contract("", culendarAbi);
     const filter = culandar.filters.JoinedWaitlist()
     return await queryFilterBatched(0, 0, culandar, filter)
 
