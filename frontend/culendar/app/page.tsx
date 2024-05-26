@@ -8,6 +8,7 @@ import { utf8ToBytes, bytesToUtf8 } from "@noble/ciphers/utils";
 import { WalletConnectModal } from "@/components/walletConnectModal";
 import { useWeb3ModalAccount } from "@web3modal/ethers/react";
 import WalletConnectButton from "@/components/ui/walletConnectButton";
+import Modal from "@/components/ui/modal";
 import {
   Carousel,
   CarouselContent,
@@ -37,15 +38,12 @@ export default function Home() {
   } | null>(null);
 
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  function handleAddEvent() {
+    !isModalOpen ? setIsModalOpen(true) : setIsModalOpen(false);
+  }
 
   useEffect(() => {
-    const priv =
-      "a546e36bf0527c9d3b16154b82465edd62144c0ac1fc5a18506a2244ba449ac4";
-    console.log("✞✞✞✞✞✞✞", x25519.getPublicKey(priv));
-
-    const key = randomBytes(32); // 32 bytes for 256-bit key
-    const nonce = randomBytes(24); // 24 bytes for XChaCha20-Poly1305 nonce
-
     const event = {
       Title: "Meeting",
       Location: "Office",
@@ -54,6 +52,14 @@ export default function Home() {
 
     // Convert JSON object to string and then to UTF-8 bytes
     const eventBytes = utf8ToBytes(JSON.stringify(event));
+
+    // Generate a key pair
+    const priv =
+      "a546e36bf0527c9d3b16154b82465edd62144c0ac1fc5a18506a2244ba449ac4";
+    console.log("✞✞✞✞✞✞✞", x25519.getPublicKey(priv));
+
+    const key = randomBytes(32); // 32 bytes for 256-bit key
+    const nonce = randomBytes(24); // 24 bytes for XChaCha20-Poly1305 nonce
 
     // Encrypt the message
     const cipherInstance = xchacha20poly1305(key, nonce);
@@ -175,15 +181,17 @@ export default function Home() {
                   <p className="text-sm text-muted-foreground">
                     Please either create or join an event
                   </p>
-                  <Button className="mt-4">Add Event</Button>
+                  <Button className="mt-4" onClick={handleAddEvent}>
+                    Add Event
+                  </Button>
                   <WalletConnectButton />
+                  {isModalOpen && <Modal></Modal>}
                 </div>
               </div>
             ) : (
               // Not connected, show wallet connect modal
               <WalletConnectModal />
             )}
-
             <Carousel
               opts={{
                 align: "start",

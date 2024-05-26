@@ -31,6 +31,7 @@ async function querryJoinedWaitlist(from, to) {
     return await queryFilterBatched(from, to, culandar, filter)
 
 }
+
 async function queryFilterBatched(fromBlock, toBlock, contract, filter) {
     const batchSize = 10000
     let batchedEvents =  []
