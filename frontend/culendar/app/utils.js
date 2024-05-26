@@ -2,36 +2,38 @@ import { Contract, ContractEventName } from 'ethers'
 import { xchacha20poly1305 } from "@noble/ciphers/chacha";
 import {culendarAbi} from '../abis/Culendar.abi'
 
-async function querryCreateEvent() {
-    let culandar = new Contract("", culendarAbi);
+const culendarContractAddress = process.env.culendarContractAddress;
+
+async function querryCreateEvent(from, to) {
+    let culandar = new Contract(culendarContractAddress, culendarAbi);
     const filter = culandar.filters.CreatedEvent()
-    return await queryFilterBatched(0, 0, culandar, filter)
+    return await queryFilterBatched(from, to, culandar, filter)
 
 }
 
-async function querryConfirmEvent() {
-    let culandar = new Contract("", culendarAbi);
+async function querryConfirmEvent(from, to) {
+    let culandar = new Contract(culendarContractAddress, culendarAbi);
     const filter = culandar.filters.Confirmed()
-    return await queryFilterBatched(0, 0, culandar, filter)
+    return await queryFilterBatched(from, to, culandar, filter)
 
 }
 
-async function querryDeclined() {
-    let culandar = new Contract("", culendarAbi);
+async function querryDeclined(from, to ) {
+    let culandar = new Contract(culendarContractAddress, culendarAbi);
     const filter = culandar.filters.Declined()
-    return await queryFilterBatched(0, 0, culandar, filter)
+    return await queryFilterBatched(from, to, culandar, filter)
 
 }
 
-async function querryJoinedWaitlist() {
-    let culandar = new Contract("", culendarAbi);
+async function querryJoinedWaitlist(from, to) {
+    let culandar = new Contract(culendarContractAddress, culendarAbi);
     const filter = culandar.filters.JoinedWaitlist()
-    return await queryFilterBatched(0, 0, culandar, filter)
+    return await queryFilterBatched(from, to, culandar, filter)
 
 }
-async function queryFilterBatched(fromBlock: number, toBlock: number, contract: Contract, filter: ContractEventName) {
+async function queryFilterBatched(fromBlock, toBlock, contract, filter) {
     const batchSize = 10000
-    let batchedEvents: any[] = []
+    let batchedEvents =  []
     let i = fromBlock
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -51,11 +53,11 @@ async function loadPeers() {
 }
 
 async function findJoinedWaitlist(
-    keypair : any,
-    peers : any, // liste von peers aus der registry geladen
-    events : any [],
+    keypair ,
+    peers , // liste von peers aus der registry geladen
+    events ,
 ) {
-    const loadedPeers = peers?.map((p: { shieldedAddress: any; }) => p.shieldedAddress || p) ?? []
+    const loadedPeers = peers?.map(p => p.shieldedAddress || p) ?? []
     peers = peers ? peers.concat(loadedPeers) : loadedPeers
     const cipherInstance = xchacha20poly1305(keypair.pubKey, 0);
 
