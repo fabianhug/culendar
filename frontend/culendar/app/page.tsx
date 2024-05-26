@@ -25,6 +25,54 @@ import {
   CalendarFold,
   CalendarCheck2,
 } from "lucide-react";
+// import { culendarAbi } from '../abis/Culendar.abi.json'
+const culendarAbi = '[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"eventId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"confirmation","type":"bytes"}],"name":"Confirmed","type":"event"},{"anonymous":false,"inputs":[{"components":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"ipfsImageLink","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"uint8","name":"capacity","type":"uint8"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"uint256","name":"waitlistCount","type":"uint256"}],"indexed":false,"internalType":"struct Culendar.PublicEvent","name":"publicEvent","type":"tuple"},{"indexed":false,"internalType":"bytes32","name":"eventId","type":"bytes32"},{"indexed":false,"internalType":"address","name":"organizer","type":"address"}],"name":"CreatedEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"eventId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"confirmation","type":"bytes"}],"name":"Declined","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"eventId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"invitation","type":"bytes"}],"name":"Invited","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"eventId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"confirmation","type":"bytes"}],"name":"JoinedWaitlist","type":"event"},{"inputs":[{"internalType":"bytes32","name":"eventId","type":"bytes32"},{"internalType":"bytes","name":"confirmation","type":"bytes"}],"name":"confirm","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"ipfsImageLink","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"uint8","name":"capacity","type":"uint8"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"uint256","name":"waitlistCount","type":"uint256"}],"internalType":"struct Culendar.PublicEvent","name":"publicEvent","type":"tuple"},{"internalType":"bytes32","name":"eventId","type":"bytes32"}],"name":"createEvent","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"eventId","type":"bytes32"},{"components":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"ipfsImageLink","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"uint8","name":"capacity","type":"uint8"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"uint256","name":"waitlistCount","type":"uint256"}],"internalType":"struct Culendar.PublicEvent","name":"publicEvent","type":"tuple"},{"internalType":"bytes[]","name":"invitations","type":"bytes[]"}],"name":"createEventAndInvite","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"eventId","type":"bytes32"},{"internalType":"bytes","name":"reason","type":"bytes"}],"name":"decline","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"eventIds","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"events","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"ipfsImageLink","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"uint8","name":"capacity","type":"uint8"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"uint256","name":"waitlistCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getEventIds","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"eventId","type":"bytes32"},{"internalType":"bytes","name":"waitlistMsg","type":"bytes"}],"name":"joinWaitlist","outputs":[],"stateMutability":"nonpayable","type":"function"}]'
+
+import { writeContract } from '@wagmi/core'
+import {config} from '../config'
+
+import { Contract, JsonRpcProvider, BrowserProvider } from 'ethers'
+
+// struct PublicEvent {
+//   string title;
+//   string ipfsImageLink;
+//   string description;
+//   string date;
+//   uint8 capacity;
+//   address organizer;
+//   uint256 waitlistCount;
+// }
+
+ async function getSigner() {
+  await window.ethereum.request({ method: 'eth_requestAccounts' })
+  return new BrowserProvider(window.ethereum).getSigner()
+}
+
+// PublicEvent memory publicEvent, bytes32 eventId
+async function createEventTransaction(event, eventId) {
+  // const { hash } = await writeContract(config,{
+  //   address: '0xf542959206c268d090f3fc559706917467aa9ef6',
+  //   abi: culendarAbi,
+  //   functionName: 'createEvent',
+  //   args: [event, eventId],
+  // })
+  
+
+  
+ const contract = new Contract(
+  '0xf542959206c268d090f3fc559706917467aa9ef6',
+  culendarAbi,
+  { provider: await getSigner().then(s => s.provider)}
+)
+
+const hash = await contract.createEvent(event, eventId)
+
+  console.log(hash)
+
+}
+
+// 
+
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,6 +89,30 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   function handleAddEvent() {
     !isModalOpen ? setIsModalOpen(true) : setIsModalOpen(false);
+
+    // struct PublicEvent {
+    //   string title;
+    //   string ipfsImageLink;
+    //   string description;
+    //   string date;
+    //   uint8 capacity;
+    //   address organizer;
+    //   uint256 waitlistCount;
+    // }
+
+    // PublicEvent memory publicEvent, bytes32 eventId
+
+
+
+    createEventTransaction({
+      title: "hello ethberlin",
+      ipfsImageLink: "",
+      description: "test",
+      date: "today",
+      capacity: 10000,
+      organizer: "alex",
+      waitlistCount: 50
+    }, "0x" + randomBytes(32).toString("hex"));
   }
 
   useEffect(() => {
